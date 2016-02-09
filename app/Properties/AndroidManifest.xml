@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="XfxMap.Example.Droid" android:installLocation="auto" android:versionCode="1" android:versionName="0.1.1">
+	<uses-sdk android:minSdkVersion="16" android:targetSdkVersion="23" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+	<application android:label="XfxMap.Example.Droid" >
+    <!--application android:largeHeap="true"-->
+    <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyCT_Mpk0eH7rt1Sr5B-xtI6bFAoHrCyeMQ" />
+    <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+  </application>
+</manifest>
