@@ -9,6 +9,9 @@
 # Databases
 *.sqlite3
 
+# Android Manifest
+AndroidManifest.xml
+
 # Build results
 
 [Dd]ebug/
