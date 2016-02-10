@@ -65,6 +65,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnnotationModel.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MyMapFragment.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />

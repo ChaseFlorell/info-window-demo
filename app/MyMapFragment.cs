@@ -6,6 +6,7 @@ using Android.Net;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Java.Beans;
 using Java.Lang;
 
 namespace app
@@ -32,7 +33,7 @@ namespace app
         // Point on the map , respectively, which moved the movement popup
         private static LatLng _trackedPosition;
         private static MyMapFragment _this;
-        public static int PopupPositionRefreshInterval = 16;
+        public static int PopupPositionRefreshInterval = 10;
 
         private static readonly Spot[] SpotsArray =
         {
@@ -48,7 +49,7 @@ namespace app
         private ViewTreeObserver.IOnGlobalLayoutListener _infoWindowLayoutListener;
         // Runnable, which updates the position of the window
         private IRunnable _positionUpdaterRunnable;
-        private Dictionary<Marker, Spot> _spots;
+        private Dictionary<string, AnnotationModel> _spots;
         private TextView textView;
 
 
@@ -83,10 +84,9 @@ namespace app
             var newCameraLocation = projection.FromScreenLocation(trackedPoint);
             map.AnimateCamera(CameraUpdateFactory.NewLatLng(newCameraLocation), AnimationDuration, null);
 
-            //var spot = _spots[marker];
-            // todo: chase figure this out.
-            // textView.SetText(spot.Name);
-            // _button.SetTag(spot.Name);
+            var spot = _spots[marker.Id].Spot;
+            textView.Text = spot.Name;
+            _button.Tag = spot.Name;
 
             _infoWindowContainer.Visibility = ViewStates.Visible;
 
@@ -97,7 +97,7 @@ namespace app
         {
             base.OnCreate(savedInstanceState);
 
-            _spots = new Dictionary<Marker, Spot>();
+            _spots = new Dictionary<string, AnnotationModel>();
             MarkerHeight = Resources.GetDrawable(Resource.Drawable.pin).IntrinsicHeight;
         }
 
@@ -128,7 +128,7 @@ namespace app
                 mo.SetSnippet("foo");
                 var marker = map.AddMarker(mo);
 
-                _spots.Add(marker, spot);
+                _spots.Add(marker.Id, new AnnotationModel(marker, spot));
             }
 
             _infoWindowContainer = rootView.FindViewById(Resource.Id.container_popup);
@@ -149,7 +149,7 @@ namespace app
         {
             base.OnViewCreated(view, savedInstanceState);
 
-            //очистка
+            // cleaning
             _handler = new Handler(Looper.MainLooper);
             _positionUpdaterRunnable = new PositionUpdaterRunnable();
             _handler.Post(_positionUpdaterRunnable);
@@ -167,7 +167,7 @@ namespace app
         {
             public void OnGlobalLayout()
             {
-                //размеры окна изменились, обновляем смещения
+                // Window size is changed , the offset update
                 _popupXOffset = _infoWindowContainer.Width/2;
                 _popupYOffset = _infoWindowContainer.Height;
             }
@@ -183,7 +183,7 @@ namespace app
                 // Put in place the next cycle of updates
                 _handler.PostDelayed(this, PopupPositionRefreshInterval);
 
-                //если всплывающее окно скрыто, ничего не делаем
+                // If the pop-up window is hidden , do nothing
                 if (_trackedPosition == null || _infoWindowContainer.Visibility != ViewStates.Visible)
                 {
                     return;
@@ -199,6 +199,7 @@ namespace app
                 }
 
                 // Update position
+                //_infoWindowContainer.TranslationX
                 OverlayLayoutParams.X = targetPosition.X - _popupXOffset;
                 OverlayLayoutParams.Y = targetPosition.Y - _popupYOffset - MarkerHeight - 30;
                 _infoWindowContainer.LayoutParameters = OverlayLayoutParams;
